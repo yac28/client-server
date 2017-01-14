@@ -10,15 +10,10 @@
 
 #define MAX_L 16
 
-int s1;
-
-char str[MAX_L];
-char buffer[MAX_L];
-
-void client_connection()
+int client_connection()
 {
 	
-
+	int s1;
 	struct sockaddr_in server_endpoint;
 	server_endpoint.sin_family=AF_INET;
 	server_endpoint.sin_port=htons(1025);
@@ -26,24 +21,26 @@ void client_connection()
 	s1=socket(AF_INET,SOCK_STREAM,0);
 	connect(s1,&server_endpoint,sizeof(server_endpoint));
 	printf("connessione eseguita! :D \n");
+
+	return s1;
 }
 
-void client_close()
+void client_close(int s)
 {
-	close(s1);
+	close(s);
 }
 
-void client_send()
+int client_send(int s)
 {
-	strcpy(str, "client: ciao");
-	printf("%s \n",str);
-	send(s1, str, MAX_L, 0);
+	send(s, "ciao", 4, 0);
 	printf("Messaggio inviato! \n");
+	
+	return s;
 }
 
-void client_recovery()
+/*void client_recovery()
 {
-	if(recv(s1,buffer[MAX_L],MAX_L,0)!=0)
+	if(recv(s,buffer[MAX_L],MAX_L,0)!=0)
 	{
 		printf("Risposta ricevuta \"%s\"\n",buffer);
 	}
@@ -51,12 +48,13 @@ void client_recovery()
 	{
 		printf("Messaggio non ricevuto :( \n");
 	}
-}
+}*/
 
 int main()
 {
-	client_connection();
-	client_send();
-	client_close();
+	int s = client_connection();
+	s = client_send(s);
+	client_close(s);
+
 	return 0;
 }
